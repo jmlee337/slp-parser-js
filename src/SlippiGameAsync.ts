@@ -34,6 +34,7 @@ export class SlippiGameAsync {
   private stockComputer: StockComputer = new StockComputer();
   private inputComputer: InputComputer = new InputComputer();
   private statsComputer: Stats;
+  private processPromise: Promise<any> = Promise.resolve();
 
   public constructor(input: string | Buffer, opts?: StatOptions) {
     if (_.isString(input)) {
@@ -70,26 +71,31 @@ export class SlippiGameAsync {
     });
   }
 
-  private async _process(settingsOnly = false): Promise<void> {
+  private async _process(settingsOnly = false): Promise<any> {
     if (this.parser.getGameEnd() !== null) {
       return;
     }
-    const slpfile = await openSlpFile(this.input);
-    // Generate settings from iterating through file
-    this.readPosition = await iterateEvents(
-      slpfile,
-      (command, payload) => {
-        if (!payload) {
-          // If payload is falsy, keep iterating. The parser probably just doesn't know
-          // about this command yet
-          return false;
-        }
-        this.parser.handleCommand(command, payload);
-        return settingsOnly && this.parser.getSettings() !== null;
-      },
-      this.readPosition,
+
+    await this.processPromise;
+    this.processPromise = openSlpFile(this.input).then((slpFile) =>
+      iterateEvents(
+        slpFile,
+        (command, payload) => {
+          if (!payload) {
+            // If payload is falsy, keep iterating. The parser probably just doesn't know
+            // about this command yet
+            return false;
+          }
+          this.parser.handleCommand(command, payload);
+          return settingsOnly && this.parser.getSettings() !== null;
+        },
+        this.readPosition,
+      ).then((newReadPosition) => {
+        this.readPosition = newReadPosition;
+        return closeSlpFile(slpFile);
+      }),
     );
-    await closeSlpFile(slpfile);
+    return this.processPromise;
   }
 
   /**
