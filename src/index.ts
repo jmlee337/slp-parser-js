@@ -18,5 +18,6 @@ export * from "./console";
 
 // Support both named and default exports
 export * from "./SlippiGame";
+export * from "./SlippiGameAsync";
 
 export default SlippiGame;

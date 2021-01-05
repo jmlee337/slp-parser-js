@@ -22,7 +22,7 @@ import {
 /**
  * Slippi Game class that wraps a file
  */
-export class SlippiGame {
+export class SlippiGameAsync {
   private input: SlpReadInput;
   private metadata: MetadataType | null;
   private finalStats: StatsType | null;

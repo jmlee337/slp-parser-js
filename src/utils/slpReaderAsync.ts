@@ -47,7 +47,7 @@ async function readRef(
 ): Promise<number> {
   switch (ref.source) {
     case SlpInputSource.FILE:
-      return read((ref as SlpFileSourceRef).fileDescriptor, buffer, offset, length, position);
+      return (await read((ref as SlpFileSourceRef).fileDescriptor, buffer, offset, length, position)).bytesRead;
     case SlpInputSource.BUFFER:
       return (ref as SlpBufferSourceRef).buffer.copy(buffer, offset, position, position + length);
     default:
@@ -77,7 +77,7 @@ export async function openSlpFile(input: SlpReadInput): Promise<SlpFileType> {
   const rawDataLength = await getRawDataLength(ref, rawDataPosition);
   const metadataPosition = rawDataPosition + rawDataLength + 10; // remove metadata string
   const metadataLength = await getMetadataLength(ref, metadataPosition);
-  const messageSizes = getMessageSizes(ref, rawDataPosition);
+  const messageSizes = await getMessageSizes(ref, rawDataPosition);
 
   return {
     ref: ref,
