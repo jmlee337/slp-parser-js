@@ -1,7 +1,7 @@
 import _ from "lodash";
 // import path from 'path';
 import fs from "fs";
-import { SlippiGame } from "../src";
+import { FrameEntryType, FramesType, GameEndType, GameStartType, MetadataType, SlippiGame, StatsType } from "../src";
 
 it("should correctly return game settings", () => {
   const game = new SlippiGame("slp/sheik_vs_ics_yoshis.slp");
@@ -104,7 +104,14 @@ it("should support realtime parsing", () => {
   let data,
     copyPos = 0;
 
-  const getData = () => ({
+  const getData = (): {
+    settings: GameStartType;
+    frames: FramesType;
+    metadata: MetadataType;
+    gameEnd: GameEndType | null;
+    stats: StatsType;
+    latestFrame: FrameEntryType | null;
+  } => ({
     settings: game.getSettings(),
     frames: game.getFrames(),
     metadata: game.getMetadata(),
