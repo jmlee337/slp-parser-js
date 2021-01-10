@@ -117,7 +117,15 @@ export class SlpFile extends Writable {
         this.metadata.lastFrame = frame;
 
         // Update character usage
-        const prevPlayer = get(this.metadata, ["players", `${playerIndex}`]) || {};
+        const prevPlayer = get(
+          this.metadata,
+          ["players", playerIndex],
+          {} as {
+            characterUsage: {
+              [internalCharacterId: number]: number;
+            };
+          },
+        );
         const characterUsage = prevPlayer.characterUsage || {};
         const curCharFrames = characterUsage[internalCharacterId] || 0;
         const player = {
