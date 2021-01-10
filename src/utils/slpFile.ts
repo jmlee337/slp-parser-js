@@ -12,7 +12,7 @@ export interface SlpFileMetadata {
   lastFrame: number;
   players: {
     [playerIndex: number]: {
-      characters: {
+      characterUsage: {
         [internalCharacterId: number]: number;
       };
     };
@@ -118,12 +118,12 @@ export class SlpFile extends Writable {
 
         // Update character usage
         const prevPlayer = get(this.metadata, ["players", `${playerIndex}`]) || {};
-        const characters = prevPlayer.characters || {};
-        const curCharFrames = characters[internalCharacterId] || 0;
+        const characterUsage = prevPlayer.characterUsage || {};
+        const curCharFrames = characterUsage[internalCharacterId] || 0;
         const player = {
           ...prevPlayer,
-          characters: {
-            ...characters,
+          characterUsage: {
+            ...characterUsage,
             [internalCharacterId]: curCharFrames + 1,
           },
         };
@@ -214,7 +214,7 @@ export class SlpFile extends Writable {
       footer = Buffer.concat([footer, Buffer.from("U"), Buffer.from([10]), Buffer.from("characters{")]);
 
       // Write character usage
-      forEach(player.characters, (usage, internalId) => {
+      forEach(player.characterUsage, (usage, internalId) => {
         // Write this character
         footer = Buffer.concat([
           footer,
