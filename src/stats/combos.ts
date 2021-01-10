@@ -49,17 +49,13 @@ function handleComboCompute(
   combos: ComboType[],
 ): void {
   const playerFrame: PostFrameUpdateType = frame.players[indices.playerIndex].post;
-  const prevPlayerFrame: PostFrameUpdateType = _.get(
-    frames,
-    [playerFrame.frame - 1, "players", indices.playerIndex, "post"],
-    {} as PostFrameUpdateType,
-  );
+  // FIXME: use type PostFrameUpdateType instead of any
+  // This is because the default value {} should not be casted as a type of PostFrameUpdateType
+  const prevPlayerFrame: any = _.get(frames, [playerFrame.frame - 1, "players", indices.playerIndex, "post"], {});
   const opponentFrame: PostFrameUpdateType = frame.players[indices.opponentIndex].post;
-  const prevOpponentFrame: PostFrameUpdateType = _.get(
-    frames,
-    [playerFrame.frame - 1, "players", indices.opponentIndex, "post"],
-    {} as PostFrameUpdateType,
-  );
+  // FIXME: use type PostFrameUpdateType instead of any
+  // This is because the default value {} should not be casted as a type of PostFrameUpdateType
+  const prevOpponentFrame: any = _.get(frames, [playerFrame.frame - 1, "players", indices.opponentIndex, "post"], {});
 
   const opntIsDamaged = isDamaged(opponentFrame.actionStateId);
   const opntIsGrabbed = isGrabbed(opponentFrame.actionStateId);
